@@ -2,29 +2,33 @@
 
 require "../includes/config.php";
 
-function response($status, $msg, $data=null) {
+function response($status, $message, $data=null) {
     echo json_encode([
         "status" => $status,
-        "message" => $msg,
+        "message" => $message,
         "data" => $data
     ]);
     exit;
 }
 
 if ($_SERVER["REQUEST_METHOD"] !== "GET") {
-    response("error", "Gunakan metode GET.!!");
+    response("false", "Gunakan metode GET.!!");
 }
 
-$result = $mysqli->query("SELECT id_buku, judul, penulis, cover_buku FROM buku ORDER BY id_buku DESC");
+$result = $mysqli->query("SELECT id_transaksi, kategori_id, judul, jumlah, tipe, tanggal, keterangan FROM transaksi ORDER BY id_transaksi DESC");
 
 $daftar = [];
 while ($row = $result->fetch_assoc()) {
     $daftar[] = [
-        "id_buku" => $row['id_buku'],
+        "id_transaksi" => $row['id_transaksi'],
+        "kategori_id" => $row['kategori_id'],
         "judul" => $row['judul'],
-        "penulis" => $row['penulis'],     
-        "cover_buku" => "http://localhost/admin-perpustakaan/pages/uploads/buku/" . $row['cover_buku']
+        "jumlah" => $row['jumlah'], 
+        "tipe" => $row['tipe'], 
+        "tanggal" => $row['tanggal'],
+        "keterangan" => $row['keterangan'],      
+        "detail_url" => "http://localhost/keuangan/index.php?hal=daftar-transaksi&id=" . $row['id_transaksi']
     ];
 }
 
-response("success", "Daftar buku diambil", $daftar);
+response("true", "Daftar transaksi diambil", $daftar);
